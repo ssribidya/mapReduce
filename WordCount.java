@@ -8,6 +8,7 @@ import org.apache.spark.api.java.function.*;
 import scala.Tuple2;
 
 import org.apache.hadoop.io.*;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.*;
 import org.apache.spark.SparkConf;
 
@@ -26,6 +27,16 @@ public static class Map extends MapReduceBase implements Mapper<LongWritable, Te
 	       }
      }
 }
+	
+public static class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
+	     public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
+	       int sum = 0;
+	       while (values.hasNext()) {
+	         sum += values.next().get();
+	       }
+	       output.collect(key, new IntWritable(sum));
+	     }
+	   }
 	
 
 public static void main(String[] args) {
